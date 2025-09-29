@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outlook邮箱注册助手 - 智能注册工具</title>
+    <meta name="description" content="智能Outlook邮箱注册工具，多种策略确保注册成功">
+    
+    <!-- CSS 样式文件 -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    
+    <!-- 外部字体和图标 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>正在初始化注册助手...</h3>
+            <p>请稍候，正在准备最佳注册策略</p>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div id="main-container" class="main-container">
+        <!-- 头部导航 -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h1>Outlook注册助手</h1>
+                </div>
+                <div class="header-controls">
+                    <button id="theme-toggle" class="theme-toggle" title="切换主题">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="settings-btn" class="settings-btn" title="设置">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">连接状态:</span>
+                <span id="connection-status" class="status-value online">在线</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">成功率:</span>
+                <span id="success-rate" class="status-value">87%</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">今日注册:</span>
+                <span id="today-count" class="status-value">0</span>
+            </div>
+        </div>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 左侧面板 - 注册表单 -->
+            <section class="left-panel">
+                <div class="panel-card">
+                    <h2 class="section-title">
+                        <i class="fas fa-user-plus"></i>
+                        Outlook邮箱注册
+                    </h2>
+                    
+                    <!-- 注册表单 -->
+                    <form id="registration-form" class="registration-form">
+                        <!-- 基本信息 -->
+                        <div class="form-group">
+                            <label for="desired-email" class="form-label">期望邮箱名</label>
+                            <div class="input-group">
+                                <input type="text" id="desired-email" class="form-input" placeholder="输入期望的邮箱名">
+                                <span class="input-suffix">@outlook.com</span>
+                                <button type="button" id="generate-email" class="input-button" title="生成随机邮箱名">
+                                    <i class="fas fa-dice"></i>
+                                </button>
+                            </div>
+                            <div class="form-hint">如果不可用，系统会自动生成替代方案</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">密码</label>
+                            <div class="input-group">
+                                <input type="password" id="password" class="form-input" placeholder="输入密码">
+                                <button type="button" id="generate-password" class="input-button" title="生成强密码">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                                <button type="button" id="show-password" class="input-button" title="显示/隐藏密码">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div id="strength-indicator" class="strength-indicator"></div>
+                                </div>
+                                <span id="strength-text" class="strength-text">请输入密码</span>
+                            </div>
+                        </div>
+
+                        <!-- 个人信息 -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first-name" class="form-label">名字</label>
+                                <input type="text" id="first-name" class="form-input" placeholder="First Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name" class="form-label">姓氏</label>
+                                <input type="text" id="last-name" class="form-input" placeholder="Last Name">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="birth-month" class="form-label">出生月份</label>
+                                <select id="birth-month" class="form-select">
+                                    <option value="">选择月份</option>
+                                    <option value="01">一月</option>
+                                    <option value="02">二月</option>
+                                    <option value="03">三月</option>
+                                    <option value="04">四月</option>
+                                    <option value="05">五月</option>
+                                    <option value="06">六月</option>
+                                    <option value="07">七月</option>
+                                    <option value="08">八月</option>
+                                    <option value="09">九月</option>
+                                    <option value="10">十月</option>
+                                    <option value="11">十一月</option>
+                                    <option value="12">十二月</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="birth-day" class="form-label">出生日期</label>
+                                <select id="birth-day" class="form-select">
+                                    <option value="">选择日期</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="birth-year" class="form-label">出生年份</label>
+                                <select id="birth-year" class="form-select">
+                                    <option value="">选择年份</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country" class="form-label">国家/地区</label>
+                            <select id="country" class="form-select">
+                                <option value="">选择国家/地区</option>
+                                <option value="US">美国</option>
+                                <option value="CN">中国</option>
+                                <option value="HK">香港</option>
+                                <option value="TW">台湾</option>
+                                <option value="SG">新加坡</option>
+                                <option value="JP">日本</option>
+                                <option value="KR">韩国</option>
+                                <option value="GB">英国</option>
+                                <option value="CA">加拿大</option>
+                                <option value="AU">澳大利亚</option>
+                            </select>
+                        </div>
+
+                        <!-- 验证信息 -->
+                        <div class="form-group">
+                            <label for="phone" class="form-label">手机号码（可选）</label>
+                            <div class="input-group">
+                                <select id="phone-country" class="form-select phone-country">
+                                    <option value="+86">+86 中国</option>
+                                    <option value="+1">+1 美国</option>
+                                    <option value="+852">+852 香港</option>
+                                    <option value="+886">+886 台湾</option>
+                                    <option value="+65">+65 新加坡</option>
+                                </select>
+                                <input type="tel" id="phone" class="form-input" placeholder="手机号码">
+                            </div>
+                            <div class="form-hint">建议提供手机号以提高注册成功率</div>
+                        </div>
+
+                        <!-- 注册策略选择 -->
+                        <div class="form-group">
+                            <label class="form-label">注册策略</label>
+                            <div class="strategy-options">
+                                <label class="radio-option">
+                                    <input type="radio" name="strategy" value="standard" checked>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-label">标准模式</span>
+                                    <span class="radio-desc">常规注册流程</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="strategy" value="smart">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-label">智能模式</span>
+                                    <span class="radio-desc">自动优化注册参数</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="strategy" value="aggressive">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-label">激进模式</span>
+                                    <span class="radio-desc">多种策略并行尝试</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 高级选项 -->
+                        <div class="form-group">
+                            <button type="button" id="advanced-toggle" class="advanced-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                                高级选项
+                            </button>
+                            <div id="advanced-options" class="advanced-options">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="auto-retry" checked>
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">失败时自动重试</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="use-proxy">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">使用代理IP</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="randomize-data">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">随机化用户数据</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="delay-requests">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">延迟请求（模拟人类操作）</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 提交按钮 -->
+                        <div class="form-actions">
+                            <button type="button" id="auto-fill-btn" class="btn btn-secondary">
+                                <i class="fas fa-magic"></i>
+                                智能填充
+                            </button>
+                            <button type="submit" id="register-btn" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i>
+                                开始注册
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 右侧面板 - 状态和日志 -->
+            <section class="right-panel">
+                <!-- 注册进度 -->
+                <div class="panel-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-tasks"></i>
+                        注册进度
+                    </h3>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <div class="step" data-step="1">
+                                <div class="step-icon"><i class="fas fa-check"></i></div>
+                                <div class="step-label">验证参数</div>
+                            </div>
+                            <div class="step" data-step="2">
+                                <div class="step-icon"><i class="fas fa-check"></i></div>
+                                <div class="step-label">连接服务器</div>
+                            </div>
+                            <div class="step" data-step="3">
+                                <div class="step-icon"><i class="fas fa-check"></i></div>
+                                <div class="step-label">提交注册</div>
+                            </div>
+                            <div class="step" data-step="4">
+                                <div class="step-icon"><i class="fas fa-check"></i></div>
+                                <div class="step-label">验证邮箱</div>
+                            </div>
+                            <div class="step" data-step="5">
+                                <div class="step-icon"><i class="fas fa-check"></i></div>
+                                <div class="step-label">完成注册</div>
+                            </div>
+                        </div>
+                        <div id="progress-text" class="progress-text">等待开始...</div>
+                    </div>
+                </div>
+
+                <!-- 实时日志 -->
+                <div class="panel-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-terminal"></i>
+                        实时日志
+                        <button id="clear-log" class="clear-log" title="清空日志">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </h3>
+                    <div id="log-container" class="log-container">
+                        <div class="log-entry info">
+                            <span class="log-time">00:00:00</span>
+                            <span class="log-message">系统已准备就绪，等待用户操作...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 注册结果 -->
+                <div id="result-card" class="panel-card" style="display: none;">
+                    <h3 class="card-title">
+                        <i class="fas fa-trophy"></i>
+                        注册结果
+                    </h3>
+                    <div id="result-content" class="result-content">
+                        <!-- 动态生成的结果内容 -->
+                    </div>
+                </div>
+
+                <!-- 帮助和技巧 -->
+                <div class="panel-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-lightbulb"></i>
+                        使用技巧
+                    </h3>
+                    <div class="tips-container">
+                        <div class="tip-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>使用不同的IP地址可以提高成功率</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>避免使用常见的用户名组合</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>建议使用真实的个人信息</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>多次失败后建议切换策略</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 设置面板 -->
+        <div id="settings-panel" class="settings-panel">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3>设置</h3>
+                    <button id="close-settings" class="close-settings">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="settings-body">
+                    <!-- 设置选项将由JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 通知容器 -->
+        <div id="notification-container" class="notification-container">
+            <!-- 动态生成的通知 -->
+        </div>
+    </div>
+
+    <!-- JavaScript 文件 -->
+    <script src="js/utils.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/strategies.js"></script>
+    <script src="js/automation.js"></script>
+    <script src="js/outlookRegistration.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
