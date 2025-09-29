@@ -1,0 +1,451 @@
+/* ============================================
+   Outlook邮箱注册助手 - 注册结果样式文件
+   包含：注册成功/失败页面、结果展示、操作按钮
+   ============================================ */
+
+/* 注册结果容器 */
+.result-success,
+.result-error {
+    padding: var(--spacing-xl);
+    text-align: center;
+    animation: result-appear 0.6s ease;
+}
+
+@keyframes result-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 成功状态 */
+.result-success {
+    color: var(--success-color);
+}
+
+.result-success h3 {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+    color: var(--success-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.result-success p {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+/* 邮箱地址展示 */
+.result-email {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    background: linear-gradient(135deg, var(--success-color), var(--info-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    background-color: var(--bg-secondary);
+    margin: var(--spacing-lg) 0;
+    word-break: break-all;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-email::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: email-shine 2s ease-in-out infinite;
+}
+
+@keyframes email-shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* 密码显示 */
+.result-success p:has(strong) {
+    background-color: var(--bg-tertiary);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--success-color);
+    margin: var(--spacing-md) 0;
+    font-family: 'Courier New', monospace;
+}
+
+/* 验证提醒 */
+.verification-notice {
+    background-color: rgba(23, 162, 184, 0.1);
+    color: var(--info-color);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(23, 162, 184, 0.2);
+    margin: var(--spacing-lg) 0;
+    font-weight: var(--font-weight-medium);
+    animation: notice-pulse 2s ease-in-out infinite;
+}
+
+@keyframes notice-pulse {
+    0%, 100% { background-color: rgba(23, 162, 184, 0.1); }
+    50% { background-color: rgba(23, 162, 184, 0.15); }
+}
+
+/* 失败状态 */
+.result-error {
+    color: var(--danger-color);
+}
+
+.result-error h3 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+    color: var(--danger-color);
+}
+
+.result-error p {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+}
+
+/* 结果操作按钮 */
+.result-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+.result-actions .btn {
+    min-width: 140px;
+    animation: btn-appear 0.8s ease 0.3s both;
+}
+
+.result-actions .btn:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+@keyframes btn-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 成功动画元素 */
+.success-checkmark {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--success-color);
+    position: relative;
+    margin: 0 auto var(--spacing-lg);
+    animation: checkmark-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes checkmark-bounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-checkmark::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 24px;
+    width: 12px;
+    height: 20px;
+    border: solid var(--text-white);
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    animation: checkmark-draw 0.3s ease 0.4s forwards;
+    opacity: 0;
+}
+
+@keyframes checkmark-draw {
+    0% {
+        height: 0;
+        opacity: 0;
+    }
+    50% {
+        height: 10px;
+        opacity: 1;
+    }
+    100% {
+        height: 20px;
+        opacity: 1;
+    }
+}
+
+/* 错误动画元素 */
+.error-cross {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--danger-color);
+    position: relative;
+    margin: 0 auto var(--spacing-lg);
+    animation: error-shake 0.6s ease-in-out;
+}
+
+@keyframes error-shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+    20%, 40%, 60%, 80% { transform: translateX(3px); }
+}
+
+.error-cross::before,
+.error-cross::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 3px;
+    background-color: var(--text-white);
+    animation: cross-draw 0.3s ease 0.2s forwards;
+    opacity: 0;
+}
+
+.error-cross::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.error-cross::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+@keyframes cross-draw {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+    100% {
+        width: 30px;
+        opacity: 1;
+    }
+}
+
+/* 统计信息显示 */
+.registration-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-lg);
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius-lg);
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--spacing-md);
+    background-color: var(--bg-primary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: transform var(--transition-fast);
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+    display: block;
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+/* 进度指示器（用于注册过程） */
+.registration-progress {
+    margin: var(--spacing-lg) 0;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-sm);
+    transition: all var(--transition-fast);
+}
+
+.progress-step.active {
+    background-color: rgba(0, 120, 212, 0.1);
+    border-left: 4px solid var(--primary-color);
+}
+
+.progress-step.completed {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 4px solid var(--success-color);
+}
+
+.progress-step.error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 4px solid var(--danger-color);
+}
+
+.step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+}
+
+.progress-step.active .step-icon {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+}
+
+.progress-step.completed .step-icon {
+    background-color: var(--success-color);
+    color: var(--text-white);
+}
+
+.progress-step.error .step-icon {
+    background-color: var(--danger-color);
+    color: var(--text-white);
+}
+
+.step-text {
+    flex: 1;
+    font-weight: var(--font-weight-medium);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .result-success,
+    .result-error {
+        padding: var(--spacing-lg);
+    }
+    
+    .result-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .result-actions .btn {
+        width: 100%;
+        max-width: 250px;
+    }
+    
+    .result-email {
+        font-size: var(--font-size-lg);
+        padding: var(--spacing-md);
+    }
+    
+    .registration-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .success-checkmark,
+    .error-cross {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .success-checkmark::after {
+        top: 15px;
+        left: 20px;
+        width: 10px;
+        height: 16px;
+    }
+    
+    .error-cross::before,
+    .error-cross::after {
+        width: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .registration-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-success h3 {
+        font-size: var(--font-size-xl);
+        flex-direction: column;
+    }
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .result-email {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    background-image: none;
+    -webkit-text-fill-color: unset;
+}
+
+[data-theme="dark"] .verification-notice {
+    background-color: rgba(23, 162, 184, 0.2);
+    border-color: rgba(23, 162, 184, 0.4);
+}
+
+[data-theme="dark"] .stat-item {
+    background-color: var(--bg-secondary);
+}
+
+/* 打印样式 */
+@media print {
+    .result-actions {
+        display: none;
+    }
+    
+    .success-checkmark,
+    .error-cross {
+        display: none;
+    }
+    
+    .result-email::before {
+        display: none;
+    }
+    
+    .registration-stats {
+        break-inside: avoid;
+    }
+}

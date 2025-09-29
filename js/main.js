@@ -245,11 +245,14 @@ const OutlookHelper = {
     async initializeModules() {
         const modules = [
             { name: 'utils', check: () => window.Utils, required: true },
-            { name: 'ui', check: () => window.UIManager, required: true },
-            { name: 'strategies', check: () => window.RegistrationStrategies, required: true },
-            { name: 'automation', check: () => window.AutomationManager, required: true },
-            { name: 'outlookCore', check: () => window.OutlookCore, required: true },
-            { name: 'registration', check: () => window.OutlookRegistration, required: true }
+            { name: 'formFiller', check: () => window.FormFiller, required: true },
+            { name: 'outlookRegister', check: () => window.OutlookRegister, required: true },
+            { name: 'uiController', check: () => window.UIController, required: true },
+            { name: 'ui', check: () => window.UIManager, required: false },
+            { name: 'strategies', check: () => window.RegistrationStrategies, required: false },
+            { name: 'automation', check: () => window.AutomationManager, required: false },
+            { name: 'outlookCore', check: () => window.OutlookCore, required: false },
+            { name: 'registration', check: () => window.OutlookRegistration, required: false }
         ];
 
         for (const module of modules) {
@@ -404,6 +407,11 @@ const OutlookHelper = {
     completeInitialization() {
         this.state.initialized = true;
         this.state.performance.initTime = Date.now() - this.state.performance.startTime;
+        
+        // 初始化UI控制器
+        if (window.UIController) {
+            window.UIController.init();
+        }
         
         // 隐藏加载屏幕
         this.hideLoadingScreen();
