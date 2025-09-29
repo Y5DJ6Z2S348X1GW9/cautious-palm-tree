@@ -245,6 +245,8 @@ const OutlookHelper = {
     async initializeModules() {
         const modules = [
             { name: 'utils', check: () => window.Utils, required: true },
+            { name: 'formProtector', check: () => window.FormProtector, required: true },
+            { name: 'secureRegistration', check: () => window.SecureRegistration, required: true },
             { name: 'formFiller', check: () => window.FormFiller, required: true },
             { name: 'outlookRegister', check: () => window.OutlookRegister, required: true },
             { name: 'uiController', check: () => window.UIController, required: true },
@@ -407,6 +409,12 @@ const OutlookHelper = {
     completeInitialization() {
         this.state.initialized = true;
         this.state.performance.initTime = Date.now() - this.state.performance.startTime;
+        
+        // 初始化表单保护模块
+        if (window.FormProtector) {
+            window.FormProtector.init();
+            console.log('✓ 表单保护模块已初始化');
+        }
         
         // 初始化UI控制器
         if (window.UIController) {

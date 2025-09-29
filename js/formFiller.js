@@ -58,6 +58,21 @@ const FormFiller = {
      * 生成表单数据
      */
     generateFormData() {
+        // 优先使用安全注册模块生成数据
+        if (window.SecureRegistration) {
+            console.log('🔒 使用安全注册模块生成数据');
+            return window.SecureRegistration.generateSecureFormData();
+        }
+        
+        // 降级到原有方法
+        console.log('⚠️ 使用基础方法生成数据');
+        return this.generateBasicFormData();
+    },
+
+    /**
+     * 生成基础表单数据（降级方案）
+     */
+    generateBasicFormData() {
         // 生成姓名
         const firstName = this.getRandomItem(this.templates.names.firstNames);
         const lastName = this.getRandomItem(this.templates.names.lastNames);
@@ -119,6 +134,12 @@ const FormFiller = {
             
             await this.fillSingleField(fieldId, value);
             await this.delay(300); // 人性化延迟
+        }
+        
+        // 填充完成后保护表单数据
+        if (window.FormProtector) {
+            window.FormProtector.saveAllValues();
+            console.log('✅ 已保护填充的表单数据');
         }
     },
 

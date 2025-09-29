@@ -62,47 +62,89 @@ const OutlookRegister = {
             this.state.currentAttempt++;
             
             try {
-                this.logInfo(`第${this.state.currentAttempt}次注册尝试`);
+                this.logInfo(`第${this.state.currentAttempt}次安全注册尝试`);
                 
-                // 步骤1: 初始化
-                this.updateProgress(1, '初始化注册会话...');
-                await this.initializeSession();
-                
-                // 步骤2: 检查用户名
-                this.updateProgress(2, '检查邮箱名可用性...');
-                const usernameResult = await this.checkUsername(formData['desired-email']);
-                
-                if (!usernameResult.available) {
-                    throw new Error(`邮箱名 "${formData['desired-email']}" 已被占用`);
+                // 🔒 使用安全注册模块
+                if (window.SecureRegistration) {
+                    this.logInfo('✅ 使用安全注册策略');
+                    this.updateProgress(1, '启动安全注册流程...');
+                    
+                    // 检查数据安全性
+                    const securityCheck = window.SecureRegistration.checkDataSecurity(formData);
+                    if (!securityCheck.isSecure) {
+                        this.logWarn('⚠️ 数据安全性检查发现问题:', securityCheck.issues);
+                        
+                        // 如果数据不安全，重新生成
+                        this.logInfo('🔄 重新生成安全数据...');
+                        const secureData = window.SecureRegistration.generateSecureFormData();
+                        
+                        // 合并用户输入的数据（保留用户自定义的部分）
+                        Object.keys(formData).forEach(key => {
+                            if (formData[key] && formData[key].trim() !== '' && 
+                                !['birth-year', 'birth-month', 'birth-day', 'country'].includes(key)) {
+                                secureData[key] = formData[key];
+                            }
+                        });
+                        
+                        formData = secureData;
+                        this.logInfo('✅ 已更新为安全数据');
+                    }
+                    
+                    // 使用安全注册流程
+                    const result = await window.SecureRegistration.performSecureRegistration(formData);
+                    return result;
+                    
+                } else {
+                    // 降级到传统方法
+                    this.logWarn('⚠️ 安全注册模块不可用，使用传统方法');
+                    return await this.performTraditionalRegistration(formData);
                 }
-                
-                // 步骤3: 准备注册数据
-                this.updateProgress(3, '准备注册数据...');
-                const registrationData = this.prepareRegistrationData(formData);
-                
-                // 步骤4: 提交注册
-                this.updateProgress(4, '提交注册请求...');
-                const result = await this.submitRegistration(registrationData);
-                
-                // 步骤5: 验证结果
-                this.updateProgress(5, '验证注册结果...');
-                const finalResult = this.processResult(result, formData);
-                
-                return finalResult;
                 
             } catch (error) {
-                this.logWarning(`第${this.state.currentAttempt}次尝试失败: ${error.message}`);
+                this.logError(`第${this.state.currentAttempt}次尝试失败: ${error.message}`);
                 
-                if (this.state.currentAttempt >= this.config.maxRetries) {
+                if (this.state.currentAttempt < this.config.maxRetries) {
+                    const delay = this.config.baseDelay * this.state.currentAttempt;
+                    this.logInfo(`等待${delay}ms后重试...`);
+                    await this.delay(delay);
+                } else {
                     throw error;
                 }
-                
-                // 等待后重试
-                const retryDelay = this.config.baseDelay * this.state.currentAttempt;
-                this.logInfo(`等待${retryDelay}ms后重试...`);
-                await this.delay(retryDelay);
             }
         }
+        
+        throw new Error('所有注册尝试都失败了');
+    },
+
+    /**
+     * 传统注册方法（降级方案）
+     */
+    async performTraditionalRegistration(formData) {
+        // 步骤1: 初始化
+        this.updateProgress(1, '初始化注册会话...');
+        await this.initializeSession();
+        
+        // 步骤2: 检查用户名
+        this.updateProgress(2, '检查邮箱名可用性...');
+        const usernameResult = await this.checkUsername(formData['desired-email']);
+        
+        if (!usernameResult.available) {
+            throw new Error(`邮箱名 "${formData['desired-email']}" 已被占用`);
+        }
+        
+        // 步骤3: 准备注册数据
+        this.updateProgress(3, '准备注册数据...');
+        const registrationData = this.prepareRegistrationData(formData);
+        
+        // 步骤4: 提交注册
+        this.updateProgress(4, '提交注册请求...');
+        const result = await this.submitRegistration(registrationData);
+        
+        // 步骤5: 验证结果
+        this.updateProgress(5, '验证注册结果...');
+        const finalResult = this.processResult(result, formData);
+        
+        return finalResult;
     },
 
     /**
