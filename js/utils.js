@@ -282,22 +282,16 @@ const Utils = {
     },
 
     /**
-     * 验证手机号格式
-     * @param {string} phone - 手机号
-     * @param {string} country - 国家代码
+     * 验证基本文本格式
+     * @param {string} text - 文本
+     * @param {number} minLength - 最小长度
+     * @param {number} maxLength - 最大长度
      * @returns {boolean} 是否有效
      */
-    validatePhone(phone, country = '+86') {
-        const patterns = {
-            '+86': /^1[3-9]\d{9}$/,
-            '+1': /^\d{10}$/,
-            '+852': /^[5-9]\d{7}$/,
-            '+886': /^09\d{8}$/,
-            '+65': /^[89]\d{7}$/
-        };
-        
-        const pattern = patterns[country];
-        return pattern ? pattern.test(phone.replace(/\s|-/g, '')) : true;
+    validateText(text, minLength = 1, maxLength = 100) {
+        if (!text || typeof text !== 'string') return false;
+        const length = text.trim().length;
+        return length >= minLength && length <= maxLength;
     },
 
     /**

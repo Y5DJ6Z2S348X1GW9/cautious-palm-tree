@@ -1,0 +1,359 @@
+/* ============================================
+   Outlook邮箱注册助手 - 自动填充样式文件
+   包含：自动填充动画、视觉反馈、提示样式
+   ============================================ */
+
+/* 自动填充视觉反馈 */
+.auto-filled {
+    background-color: var(--success-color) !important;
+    color: var(--text-white) !important;
+    animation: auto-fill-highlight 1s ease-out;
+    transition: all var(--transition-normal);
+}
+
+@keyframes auto-fill-highlight {
+    0% {
+        background-color: var(--success-color);
+        transform: scale(1.02);
+    }
+    50% {
+        background-color: var(--success-color);
+        transform: scale(1.05);
+    }
+    100% {
+        background-color: var(--bg-primary);
+        transform: scale(1);
+    }
+}
+
+/* 自动完成建议 */
+.autocomplete-suggestions {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-lg);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: var(--z-dropdown);
+}
+
+.autocomplete-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    border-bottom: 1px solid var(--bg-tertiary);
+    transition: background-color var(--transition-fast);
+    font-size: var(--font-size-sm);
+}
+
+.autocomplete-item:hover {
+    background-color: var(--bg-secondary);
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item.selected {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+}
+
+/* 验证消息样式 */
+.validation-message {
+    font-size: var(--font-size-xs);
+    margin-top: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    animation: validation-appear 0.3s ease;
+}
+
+@keyframes validation-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.validation-message.valid {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.validation-message.invalid {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.validation-message::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+/* 字段帮助提示 */
+.field-tooltip {
+    position: absolute;
+    background: var(--bg-dark);
+    color: var(--text-white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-xs);
+    max-width: 250px;
+    box-shadow: var(--box-shadow-lg);
+    animation: tooltip-fade 0.3s ease;
+    z-index: var(--z-tooltip);
+}
+
+.field-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--bg-dark);
+}
+
+/* 表单字段状态 */
+.form-input.valid,
+.form-select.valid {
+    border-color: var(--success-color);
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+.form-input.valid:focus,
+.form-select.valid:focus {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.form-input.invalid,
+.form-select.invalid {
+    border-color: var(--danger-color);
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.form-input.invalid:focus,
+.form-select.invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-input.error,
+.form-select.error {
+    border-color: var(--danger-color);
+    background-color: rgba(220, 53, 69, 0.05);
+    animation: field-shake 0.5s ease-in-out;
+}
+
+@keyframes field-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* 智能填充按钮状态 */
+.btn.auto-filling {
+    background: linear-gradient(45deg, var(--primary-color), var(--info-color));
+    background-size: 200% 200%;
+    animation: btn-gradient-shift 1.5s ease infinite;
+    pointer-events: none;
+}
+
+@keyframes btn-gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 填充进度指示器 */
+.fill-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--primary-color);
+    border-radius: 1px;
+    transition: width var(--transition-normal);
+    z-index: 1;
+}
+
+.form-input {
+    position: relative;
+}
+
+.form-input.filling {
+    overflow: hidden;
+}
+
+.form-input.filling::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, transparent, rgba(0, 120, 212, 0.1), transparent);
+    animation: fill-wave 1s ease-in-out;
+}
+
+@keyframes fill-wave {
+    0% { width: 0%; left: 0%; }
+    50% { width: 100%; left: 0%; }
+    100% { width: 0%; left: 100%; }
+}
+
+/* 选择框自动填充动画 */
+.form-select.auto-selecting {
+    background-color: rgba(0, 120, 212, 0.1);
+    animation: select-pulse 0.5s ease-in-out;
+}
+
+@keyframes select-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* 密码强度动画 */
+.strength-indicator.animating {
+    background: linear-gradient(90deg, var(--danger-color), var(--warning-color), var(--success-color));
+    background-size: 200% 100%;
+    animation: strength-flow 2s ease-in-out;
+}
+
+@keyframes strength-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* 表单组动画 */
+.form-group.filling {
+    animation: group-highlight 0.8s ease-in-out;
+}
+
+@keyframes group-highlight {
+    0% { background-color: transparent; }
+    50% { background-color: rgba(0, 120, 212, 0.05); }
+    100% { background-color: transparent; }
+}
+
+/* 生日字段联动动画 */
+.birth-fields-updating .form-select {
+    animation: select-update 0.6s ease-in-out;
+}
+
+@keyframes select-update {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* 自动填充完成指示器 */
+.auto-fill-complete {
+    position: relative;
+}
+
+.auto-fill-complete::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    color: var(--success-color);
+    font-weight: bold;
+    animation: check-appear 0.5s ease;
+}
+
+@keyframes check-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) scale(0);
+    }
+    70% {
+        transform: translateY(-50%) scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+/* 响应式自动填充样式 */
+@media (max-width: 768px) {
+    .autocomplete-suggestions {
+        max-height: 150px;
+    }
+    
+    .field-tooltip {
+        max-width: 200px;
+        font-size: 12px;
+    }
+    
+    .validation-message {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .field-tooltip {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .field-tooltip::after {
+    border-top-color: var(--bg-secondary);
+}
+
+[data-theme="dark"] .autocomplete-suggestions {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .autocomplete-item:hover {
+    background-color: var(--bg-tertiary);
+}
+
+/* 打印样式 */
+@media print {
+    .field-tooltip,
+    .autocomplete-suggestions,
+    .validation-message {
+        display: none !important;
+    }
+}
+
+/* 无障碍访问 */
+@media (prefers-reduced-motion: reduce) {
+    .auto-filled,
+    .form-group.filling,
+    .birth-fields-updating .form-select,
+    .auto-fill-complete::after {
+        animation: none !important;
+    }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+    .validation-message.valid {
+        background-color: var(--success-color);
+        color: var(--text-white);
+    }
+    
+    .validation-message.invalid {
+        background-color: var(--danger-color);
+        color: var(--text-white);
+    }
+}

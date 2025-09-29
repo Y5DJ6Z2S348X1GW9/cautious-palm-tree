@@ -242,13 +242,47 @@ const OutlookRegistration = {
     },
 
     /**
-     * 执行简单注册流程
+     * 执行真实注册流程
      * @param {object} formData - 表单数据
      * @returns {Promise<object>} 注册结果
      */
     async executeSimpleRegistration(formData) {
+        try {
+            // 验证数据完整性
+            this.updateProgress(1, '验证注册数据...');
+            if (window.OutlookCore) {
+                window.OutlookCore.validateRegistrationData(formData);
+            }
+            
+            // 使用真实的核心注册功能
+            this.updateProgress(2, '连接Microsoft服务器...');
+            
+            let result;
+            if (window.OutlookCore) {
+                // 使用真实的Outlook注册核心
+                result = await window.OutlookCore.performRegistration(formData);
+            } else {
+                // 降级到模拟注册
+                result = await this.performSimulatedRegistration(formData);
+            }
+            
+            this.updateProgress(5, '注册完成！');
+            return result;
+            
+        } catch (error) {
+            this.logRegistration('error', `注册失败: ${error.message}`);
+            throw error;
+        }
+    },
+
+    /**
+     * 模拟注册流程（备用方案）
+     * @param {object} formData - 表单数据
+     * @returns {Promise<object>} 注册结果
+     */
+    async performSimulatedRegistration(formData) {
         // 步骤1: 检查邮箱可用性
-        this.updateProgress(1, '检查邮箱可用性...');
+        this.updateProgress(2, '检查邮箱可用性...');
         const emailCheck = await this.checkEmailAvailability(formData['desired-email']);
         
         if (!emailCheck.available) {
@@ -256,19 +290,17 @@ const OutlookRegistration = {
         }
 
         // 步骤2: 准备注册数据
-        this.updateProgress(2, '准备注册数据...');
+        this.updateProgress(3, '准备注册数据...');
         const registrationData = await this.prepareRegistrationData(formData);
 
         // 步骤3: 提交注册请求
-        this.updateProgress(3, '提交注册请求...');
+        this.updateProgress(4, '提交注册请求...');
         const registrationResult = await this.submitRegistrationRequest(registrationData);
 
         // 步骤4: 处理注册响应
-        this.updateProgress(4, '处理注册响应...');
         const processedResult = await this.processRegistrationResponse(registrationResult);
 
         // 步骤5: 完成注册
-        this.updateProgress(5, '完成注册...');
         return await this.finalizeRegistration(processedResult, formData);
     },
 
@@ -356,11 +388,7 @@ const OutlookRegistration = {
             // 地理信息
             country: formData.country,
             
-            // 可选信息
-            phoneNumber: formData.phone ? {
-                countryCode: formData['phone-country'],
-                number: formData.phone
-            } : null,
+            // 注意：Outlook注册不需要手机号
             
             // 技术信息
             userAgent: this.state.currentSession.userAgent,
@@ -506,7 +534,6 @@ const OutlookRegistration = {
             LastName: data.lastName,
             BirthDate: `${data.birthDate.year}-${data.birthDate.month.toString().padStart(2, '0')}-${data.birthDate.day.toString().padStart(2, '0')}`,
             Country: data.country,
-            PhoneNumber: data.phoneNumber ? `${data.phoneNumber.countryCode}${data.phoneNumber.number}` : '',
             CaptchaToken: data.captchaToken,
             RequestTimeStamp: data.timestamp,
             FlowToken: data.flowToken,

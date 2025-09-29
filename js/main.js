@@ -248,6 +248,7 @@ const OutlookHelper = {
             { name: 'ui', check: () => window.UIManager, required: true },
             { name: 'strategies', check: () => window.RegistrationStrategies, required: true },
             { name: 'automation', check: () => window.AutomationManager, required: true },
+            { name: 'outlookCore', check: () => window.OutlookCore, required: true },
             { name: 'registration', check: () => window.OutlookRegistration, required: true }
         ];
 

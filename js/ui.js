@@ -188,13 +188,6 @@ const UIManager = {
                 }
                 break;
             
-            case 'phone':
-                const phoneCountry = document.getElementById('phone-country')?.value;
-                if (value && !Utils.validatePhone(value, phoneCountry)) {
-                    isValid = false;
-                    errorMessage = '请输入有效的手机号码';
-                }
-                break;
         }
 
         // 显示错误

@@ -30,11 +30,11 @@ const AutomationManager = {
         },
         geographic: {
             countries: {
-                'US': { name: 'United States', phone: '+1', timezone: 'America/New_York' },
-                'CA': { name: 'Canada', phone: '+1', timezone: 'America/Toronto' },
-                'GB': { name: 'United Kingdom', phone: '+44', timezone: 'Europe/London' },
-                'AU': { name: 'Australia', phone: '+61', timezone: 'Australia/Sydney' },
-                'SG': { name: 'Singapore', phone: '+65', timezone: 'Asia/Singapore' }
+                'US': { name: 'United States', timezone: 'America/New_York' },
+                'CA': { name: 'Canada', timezone: 'America/Toronto' },
+                'GB': { name: 'United Kingdom', timezone: 'Europe/London' },
+                'AU': { name: 'Australia', timezone: 'Australia/Sydney' },
+                'SG': { name: 'Singapore', timezone: 'Asia/Singapore' }
             }
         }
     },
@@ -172,8 +172,7 @@ const AutomationManager = {
             'country',
             'birth-year',
             'birth-month',
-            'birth-day',
-            'phone'
+            'birth-day'
         ];
 
         fillOrder.forEach((fieldId, index) => {
@@ -211,6 +210,12 @@ const AutomationManager = {
                 // 执行填充
                 await this.fillField(action.element, action.value, action.fieldType);
                 
+                // 特殊处理：月份变化后更新日期选项
+                if (action.element.id === 'birth-month') {
+                    await Utils.delay(300);
+                    this.updateBirthDays();
+                }
+                
                 // 触发相关事件
                 this.triggerFieldEvents(action.element);
                 
@@ -221,6 +226,9 @@ const AutomationManager = {
                 console.error(`填充字段 ${action.element.id} 失败:`, error);
             }
         }
+        
+        // 填充完成后，确保日期字段正确设置
+        await this.ensureDateFieldsComplete();
     },
 
     /**
@@ -251,12 +259,7 @@ const AutomationManager = {
         // 选择国家
         data['country'] = this.selectCountry(options.preferredCountry);
         
-        // 生成手机号（可选）
-        if (options.includePhone !== false) {
-            const phone = this.generatePhoneNumber(data['country']);
-            data['phone-country'] = phone.countryCode;
-            data['phone'] = phone.number;
-        }
+        // 注意：Outlook注册不需要手机号
         
         return data;
     },
@@ -343,43 +346,70 @@ const AutomationManager = {
     },
 
     /**
-     * 生成手机号
-     * @param {string} countryCode - 国家代码
-     * @returns {object} 手机号对象
+     * 更新生日日期选项
      */
-    generatePhoneNumber(countryCode) {
-        const country = this.templates.geographic.countries[countryCode];
-        if (!country) {
-            return { countryCode: '+1', number: '' };
+    updateBirthDays() {
+        const birthMonth = document.getElementById('birth-month');
+        const birthDay = document.getElementById('birth-day');
+        const birthYear = document.getElementById('birth-year');
+        
+        if (!birthMonth || !birthDay || !birthYear) return;
+        
+        const month = parseInt(birthMonth.value);
+        const year = parseInt(birthYear.value) || new Date().getFullYear();
+        
+        // 清空日期选项
+        birthDay.innerHTML = '<option value="">选择日期</option>';
+        
+        if (month) {
+            const daysInMonth = new Date(year, month, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement('option');
+                option.value = day.toString().padStart(2, '0');
+                option.textContent = day;
+                birthDay.appendChild(option);
+            }
+        }
+    },
+
+    /**
+     * 确保日期字段完整填充
+     */
+    async ensureDateFieldsComplete() {
+        const formData = this.generateFormData();
+        
+        // 确保月份已选择
+        const birthMonthField = document.getElementById('birth-month');
+        if (birthMonthField && !birthMonthField.value) {
+            birthMonthField.value = formData['birth-month'];
+            birthMonthField.dispatchEvent(new Event('change', { bubbles: true }));
+            await Utils.delay(200);
         }
         
-        let number = '';
-        switch (countryCode) {
-            case 'US':
-            case 'CA':
-                // 10位数字
-                number = Math.floor(Math.random() * 9000000000) + 1000000000;
-                break;
-            case 'GB':
-                // 10位数字（去除国家码）
-                number = '7' + Math.floor(Math.random() * 900000000 + 100000000);
-                break;
-            case 'AU':
-                // 9位数字
-                number = '4' + Math.floor(Math.random() * 100000000 + 10000000);
-                break;
-            case 'SG':
-                // 8位数字
-                number = '9' + Math.floor(Math.random() * 10000000 + 1000000);
-                break;
-            default:
-                number = Math.floor(Math.random() * 1000000000);
+        // 更新日期选项
+        this.updateBirthDays();
+        await Utils.delay(200);
+        
+        // 确保日期已选择
+        const birthDayField = document.getElementById('birth-day');
+        if (birthDayField && !birthDayField.value) {
+            birthDayField.value = formData['birth-day'];
+            birthDayField.dispatchEvent(new Event('change', { bubbles: true }));
         }
         
-        return {
-            countryCode: country.phone,
-            number: number.toString()
-        };
+        // 确保年份已选择
+        const birthYearField = document.getElementById('birth-year');
+        if (birthYearField && !birthYearField.value) {
+            birthYearField.value = formData['birth-year'];
+            birthYearField.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        
+        // 确保国家已选择
+        const countryField = document.getElementById('country');
+        if (countryField && !countryField.value) {
+            countryField.value = formData['country'];
+            countryField.dispatchEvent(new Event('change', { bubbles: true }));
+        }
     },
 
     /**
@@ -751,7 +781,10 @@ const AutomationManager = {
             'password': '密码长度8-128位，建议包含大小写字母、数字和特殊字符',
             'first-name': '输入您的名字',
             'last-name': '输入您的姓氏',
-            'phone': '输入手机号码，用于账户安全验证'
+            'birth-month': '选择您的出生月份',
+            'birth-day': '选择您的出生日期',
+            'birth-year': '选择您的出生年份',
+            'country': '选择您所在的国家或地区'
         };
         
         const helpText = helpTexts[fieldId];
